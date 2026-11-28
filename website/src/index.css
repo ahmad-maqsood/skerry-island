@@ -1,0 +1,112 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    color: #111318;
+    background-color: #f6f7f9;
+  }
+
+  html.dark {
+    color: #f4f5f8;
+    background-color: #090b10;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+  }
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Subtle top architectural atmosphere — restrained, zero neon */
+.skerry-hero-atmosphere {
+  background-image: radial-gradient(
+    ellipse 72% 48% at 50% -6%,
+    rgba(37, 99, 235, 0.08),
+    transparent 70%
+  );
+}
+
+.dark .skerry-hero-atmosphere {
+  background-image: radial-gradient(
+    ellipse 74% 52% at 50% -8%,
+    rgba(88, 130, 218, 0.16),
+    rgba(42, 62, 118, 0.06) 44%,
+    transparent 72%
+  );
+}
+
+/* Tactile architectural specular rim for dark elevated frames */
+.dark .skerry-rim {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 24px 64px -24px rgba(0, 0, 0, 0.72);
+}
+
+.skerry-rim {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 22px 54px -26px rgba(15, 23, 42, 0.16);
+}
+
+/* Tactile material swatches faithfully modeled after Skerry's 6 real materials */
+.swatch-midnight {
+  background:
+    radial-gradient(48% 85% at 20% 112%, rgba(124, 92, 255, 0.48), transparent 100%),
+    radial-gradient(46% 80% at 80% 112%, rgba(255, 122, 150, 0.36), transparent 100%),
+    radial-gradient(50% 65% at 50% 115%, rgba(72, 156, 255, 0.34), transparent 100%),
+    #0b0d2b;
+  box-shadow:
+    inset 0 -1.5px 0 rgba(214, 205, 255, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.swatch-graphite {
+  background: linear-gradient(135deg, #2b2d36 0%, #1c1e24 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.swatch-liquid {
+  background:
+    radial-gradient(circle at 22% 30%, rgba(125, 211, 252, 0.45), transparent 55%),
+    radial-gradient(circle at 78% 75%, rgba(99, 102, 241, 0.42), transparent 58%),
+    linear-gradient(135deg, rgba(28, 35, 56, 0.92), rgba(16, 22, 36, 0.95));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.swatch-frosted {
+  background: linear-gradient(135deg, rgba(72, 80, 99, 0.85), rgba(38, 44, 59, 0.94));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.swatch-aurora {
+  background:
+    radial-gradient(60% 90% at 24% 110%, rgba(56, 189, 248, 0.42), transparent 100%),
+    radial-gradient(60% 90% at 76% 110%, rgba(52, 211, 153, 0.32), transparent 100%),
+    linear-gradient(135deg, #151c2e 0%, #172336 100%);
+  box-shadow: inset 0 1px 0 rgba(186, 230, 253, 0.24);
+}
+
+.swatch-prism {
+  background:
+    linear-gradient(125deg, #1b2244 0%, #24385c 48%, #342556 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(186, 230, 253, 0.45),
+    inset 1px 0 0 rgba(196, 181, 253, 0.32),
+    inset -1px 0 0 rgba(251, 191, 36, 0.28);
+}

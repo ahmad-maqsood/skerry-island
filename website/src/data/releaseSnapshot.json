@@ -1,0 +1,36 @@
+{
+  "tagName": "v1.6.0",
+  "releaseUrl": "https://github.com/ahmad-maqsood/skerry-island/releases/tag/v1.6.0",
+  "publishedAt": "2026-11-28T08:50:55Z",
+  "nsis": {
+    "name": "Skerry_1.6.0_x64-setup.exe",
+    "url": "https://github.com/ahmad-maqsood/skerry-island/releases/download/v1.6.0/Skerry_1.6.0_x64-setup.exe",
+    "sizeBytes": 6064837,
+    "sizeLabel": "5.78 MB"
+  },
+  "msi": {
+    "name": "Skerry_1.6.0_x64_en-US.msi",
+    "url": "https://github.com/ahmad-maqsood/skerry-island/releases/download/v1.6.0/Skerry_1.6.0_x64_en-US.msi",
+    "sizeBytes": 8695808,
+    "sizeLabel": "8.29 MB"
+  },
+  "checksumsUrl": "https://github.com/ahmad-maqsood/skerry-island/releases/download/v1.6.0/SHA256SUMS.txt",
+  "repoMeta": {
+    "appVersion": "1.6.0",
+    "materialCount": 6,
+    "materials": [
+      "midnight",
+      "graphite",
+      "liquidGlass",
+      "frostedGlass",
+      "aurora",
+      "prism"
+    ],
+    "reactMajor": 19,
+    "viteMajor": 7,
+    "tauriMajor": 2,
+    "rustEdition": "2021",
+    "screenshotCount": 11,
+    "githubPluginVersion": "0.1.0"
+  }
+}

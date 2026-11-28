@@ -7,12 +7,14 @@ on:
       - '**/*.md'
       - 'docs/**'
       - '.github/ISSUE_TEMPLATE/**'
+      - 'website/**'
   # Every pull request is tested when it is opened (or reopened) and again on each new push to it.
   pull_request:
     paths-ignore:
       - '**/*.md'
       - 'docs/**'
       - '.github/ISSUE_TEMPLATE/**'
+      - 'website/**'
   workflow_dispatch:
 
 permissions:

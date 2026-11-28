@@ -43,3 +43,7 @@ src-tauri/tauri.release.conf.json
 *.vsix
 /artifacts/plugins/
 /plugins/**/target/
+
+# Website
+website/src/assets/screenshots/
+website/src/assets/mark.svg
