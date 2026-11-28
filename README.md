@@ -57,7 +57,7 @@ Skerry brings a streamlined, glanceable floating island to the top of your Windo
 
 - **Universal Windows Toast Feed**: Reads notifications from any app (WhatsApp, Telegram, Outlook, Teams, Chrome, Edge) with real-time one-line previews in the collapsed island.
 - **Glanceable Clock and Weather**: Optional tabular digits time display and Open-Meteo local weather forecasts when the island sits idle.
-- **Pixel Cat**: A cat that takes the clock's place on the collapsed island, on by default on a fresh install. It walks, sits and flicks its tail, hops, stretches, naps and blinks.
+- **Pixel Cat**: A cat that takes the clock's place on the collapsed island, on by default on a fresh install. It walks, washes itself, pounces on a ball of yarn, yawns, stretches, loafs, naps and dashes about. Move the cursor over the island and it perks up, chases it, swats at it, and purrs when you rest the cursor on it.
 - **Stays Where You Want It**: Keep the island out while the desktop is in front (on by default), or keep it displayed all the time.
 - **Island Pop-ups**: Short notices for copied text, new songs, the charger, Bluetooth connections, airplane mode, Caps Lock, volume and brightness, each with its own switch.
 - **Optional Live Wallpaper**: A muted, looping video behind the desktop icons, played from your original file (MP4, MOV and more; HEVC, AV1 and VP9 may need Microsoft's video extensions) without re-encoding. It pauses while open windows, alone or together, hide the desktop, while the screen is off or locked, and on battery power or in Battery Saver (switchable), then carries on from the same point. Playback restarts by itself after an error, and the players close after a long hidden spell to free memory. Off by default (Settings -> Advanced).
@@ -85,7 +85,7 @@ Skerry brings a streamlined, glanceable floating island to the top of your Windo
 <p align="center">
   <img src="docs/assets/screenshots/screenshot-pixel-cat.png" alt="Collapsed island with a pixel cat walking in place of the time" width="680">
   <br>
-  <b>Pixel Cat</b>: A small cat walks the collapsed island in place of the time. It is on by default on a fresh install.
+  <b>Pixel Cat</b>: A small cat lives on the collapsed island in place of the time and plays with your cursor. It is on by default on a fresh install.
 </p>
 
 ### Collapsed Island and Clock
@@ -217,7 +217,7 @@ Each published GitHub Release page also provides GitHub-generated source archive
   - **Opening**: Choose hover or click. A click anywhere on the collapsed bar that is not a button opens the island, including on the clock or the pixel cat.
   - **Always Display**: "Always display island on the desktop" (on by default) keeps the island out in its collapsed form while no window is open, and tucks it as soon as any window opens, even a small one. "Always display island" stops idle tucking everywhere. "Show minimize button" (on by default) is its own switch and works with the clock, the pixel cat and either always-display setting. Game mode and the tray menu still apply.
   - **Game Mode**: While a full-screen game, video or slideshow is in front, the island does not open on hover, take the focus or pop up messages. You can still allow notifications.
-  - **Pixel Cat**: An animated cat in place of the time, on by default on a fresh install (updating keeps your earlier choice). Under Settings -> Appearance, turning on the cat turns off the time, and turning on the time turns off the cat. It steps aside while a song plays and comes back when the music stops. It stays still when reduced motion is on.
+  - **Pixel Cat**: An animated cat in place of the time, on by default on a fresh install (updating keeps your earlier choice). Under Settings -> Appearance, turning on the cat turns off the time, and turning on the time turns off the cat. It steps aside while a song plays and comes back when the music stops. With the cursor on the island it chases the cursor along its lane, swats at it, and purrs while the cursor rests on it; a click still opens the island. It stays still when reduced motion is on.
   - **Three Adaptive States**: Collapsed pill for passive monitoring, expanded dashboard for active interaction, and tucked mode (docked to screen edge as a minimal bar or hidden with hover expand).
   - **Idle Clock &amp; Weather**: Tabular digits clock (off by default on a fresh install; 12 or 24 hour, optional seconds, date on hover) and an optional Open-Meteo weather report for a city you choose.
   - **Screen Edge Snapping**: Draggable positioning along the top screen edge with automatic multi-monitor awareness.

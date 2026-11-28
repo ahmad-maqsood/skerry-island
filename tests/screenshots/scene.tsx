@@ -99,7 +99,7 @@ const ready = (capture: { x: number; y: number; width: number; height: number })
 };
 
 /** The moment of the cat's loop its picture shows. */
-const CAT_POSE_MS = 2100;
+const CAT_POSE_MS = 2300;
 
 async function islandScene() {
   let revision = 1;

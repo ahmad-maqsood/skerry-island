@@ -85,6 +85,12 @@ Items below are Agent inference from design review unless marked "user confirmed
 - Light island adds subtle shadow when expanded and collapsed to define edges against white windows; dark island omits shadows. Vinyl record (music idle), QR code white container, and approval button white text remain identical across schemes.
 - Settings window native title bar and background configured via frontend call `set_settings_window_theme`, modifying DWM title bar attributes and background without touching window theme: altering window theme mutates shared WebView2 profile preferences, causing "Follow system" to read its own overridden value. Writes `data-theme` synchronously before first frame on launch, revealing window only after initial paint to prevent dark flashes.
 
+## Pixel Cat Behaviour
+
+- **Routine** (`features/pixel-cat/brain.ts`, `ROUTINE`): walk, sit, groom, crouch and pounce on a ball of yarn, swat it, walk home, yawn, stretch, loaf, nap, dash about, sit, then again. Art is in `sprite.ts` (16 x 9, one or two frames a pose).
+- **Cursor**: only while the cursor is over the collapsed bar (the page cannot see it elsewhere). The cat shows a "!" for 450ms, runs to a far cursor and walks to a near one, kept inside its lane; within reach it swats, and after 700ms of a resting cursor it purrs with hearts. When the cursor leaves (`pointerleave` or `island-hover-changed`) it sits and resumes the routine. The lane takes no pointer events, so a click still opens the island.
+- Paused while the island is open or tucked; with reduced motion it sits still in the middle of the lane and ignores the cursor.
+
 ## Materials 
 
 "Appearance -> Style -> Material": Midnight (default since 2026-11-28; a solid fill, half the island colour and half deep ink indigo, with a violet-blue-rose horizon glow and gradient rim along the bottom and a faint page-accent light from the top; pearl on a light island; no screen capture; a saved "classic" reads as Midnight; `IslandMidnight.css`), Graphite (the flat fill with a satin finish; `IslandGraphite.css`), Liquid Glass, Frosted Glass, Aurora, Prism. Stored in `skerry-settings.material`, annotated as `data-material` on `<html>`.

@@ -27,7 +27,7 @@ src/
 │   ├── device-status/       # Typed IPC and pure change detection for device pop-ups (a Bluetooth device connecting, airplane mode or Caps Lock switching, a volume or brightness step); wired in windows/island/useDevicePopups.ts and useLevelPopups.ts
 │   ├── weather/             # Built-in time and weather: city settings/cache, Open-Meteo IPC, WMO mapping, leaf time and weather, shared low-frequency refresh
 │   ├── system-monitor/      # System page: CPU / memory / disk / network / battery sampling, sparklines, collapsed chip; quick-controls/ (volume and brightness sliders) is a separate feature directory
-│   ├── pixel-cat/           # Optional walking pixel cat on the collapsed island: settings switch (storage.ts, usePixelCat), pure sprite grid and width helpers (sprite.ts, model.ts), the CSS-animated PixelCat; takes the clock's place on the bar and widens the island
+│   ├── pixel-cat/           # Optional walking pixel cat on the collapsed island: settings switch (storage.ts, usePixelCat), pure sprite grids and width helpers (sprite.ts, model.ts), the routine and cursor rules (brain.ts) run by useCatBrain, the CSS-animated PixelCat; takes the clock's place on the bar and widens the island
 │   ├── privacy/             # Microphone and camera indicator on the collapsed island
 │   ├── diagnostics/         # Troubleshooting log settings and frontend error capture
 │   ├── plugins/             # Plugin API v1 frontend: typed IPC, snapshots, usePlugins, plugin setting rows (gated by releaseFlags.ts)
