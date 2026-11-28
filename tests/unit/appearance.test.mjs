@@ -56,7 +56,7 @@ test("settings are clamped and legacy fields are migrated", () => {
   assert.equal(normalized.glassIntensity, 100);
   assert.equal(normalized.collapsedScale, 1.2);
   assert.equal(normalized.taskTextColor, "#123456");
-  assert.equal(normalized.material, "graphite");
+  assert.equal(normalized.material, "midnight");
   assert.equal(normalized.fontFamily, "pixel");
   assert.equal(normalized.topEdgeLayoutVersion, 1);
   // The old default scale pair moves to the default it moved to back then.
@@ -224,17 +224,16 @@ test("taking the appearance from other settings keeps todo and tuck behavior", (
   assert.deepEqual(withAppearanceFrom(DEFAULT_SETTINGS, DEFAULT_SETTINGS), DEFAULT_SETTINGS);
 });
 
-test("the material defaults to graphite; the old liquid glass mode carries over", () => {
-  assert.equal(DEFAULT_SETTINGS.material, "graphite");
+test("the material defaults to midnight; the old liquid glass mode carries over", () => {
+  assert.equal(DEFAULT_SETTINGS.material, "midnight");
   assert.equal(normalizeSettings({ appearanceMode: "liquidGlass" }).material, "liquidGlass");
-  assert.equal(normalizeSettings({ appearanceMode: "classic" }).material, "graphite");
-  assert.equal(normalizeSettings({ material: "graphite" }).material, "graphite");
-  assert.equal(normalizeSettings({ material: "frostedGlass" }).material, "frostedGlass");
-  assert.equal(normalizeSettings({ material: "aurora" }).material, "aurora");
-  assert.equal(normalizeSettings({ material: "prism" }).material, "prism");
-  // A saved material wins over the old field; unknown values fall back to graphite, which also took over "classic".
-  assert.equal(normalizeSettings({ material: "classic", appearanceMode: "liquidGlass" }).material, "graphite");
-  assert.equal(normalizeSettings({ material: "chrome", appearanceMode: "neon" }).material, "graphite");
+  assert.equal(normalizeSettings({ appearanceMode: "classic" }).material, "midnight");
+  for (const material of ["midnight", "graphite", "frostedGlass", "aurora", "prism"]) {
+    assert.equal(normalizeSettings({ material }).material, material);
+  }
+  // A saved material wins over the old field; unknown values fall back to midnight, which also takes over "classic".
+  assert.equal(normalizeSettings({ material: "classic", appearanceMode: "liquidGlass" }).material, "midnight");
+  assert.equal(normalizeSettings({ material: "chrome", appearanceMode: "neon" }).material, "midnight");
   assert.equal("appearanceMode" in normalizeSettings({ appearanceMode: "liquidGlass" }), false);
 });
 

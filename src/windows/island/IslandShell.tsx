@@ -23,6 +23,7 @@ import "./IslandPageText.css";
 import "./IslandGlass.css";
 import "./IslandGlassColour.css";
 import "./IslandGraphite.css";
+import "./IslandMidnight.css";
 import "./IslandTuckStyle.css";
 import { useTuckMorph } from "./useTuckMorph";
 

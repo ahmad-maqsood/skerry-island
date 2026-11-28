@@ -5,7 +5,7 @@
 // <html data-scene-error> when the scene failed).
 //
 //   scene = cat | clock | notification | messages | music | todos | shelf | system | translation | clipboard | settings
-//   ?material=graphite|liquidGlass|frostedGlass|aurora|prism  ?theme=dark|light  ?wallpaper=1  ?page=<settings page>
+//   ?material=midnight|graphite|liquidGlass|frostedGlass|aurora|prism  ?theme=dark|light  ?wallpaper=1  ?page=<settings page>
 //
 // Open it under `pnpm dev` to look at a scene by eye; `pnpm screenshots` (run by hand) captures
 // them in headless Chrome or Edge at high resolution.
@@ -67,7 +67,7 @@ localStorage.setItem("skerry-settings", JSON.stringify({
   todoTimerEnabled: true,
   // The incoming message grows the collapsed island to fit its text instead of cutting it short.
   messageAutoExpand: true,
-  ...(query.get("material") && query.get("material") !== "graphite" ? { material: query.get("material") } : {}),
+  ...(query.get("material") && query.get("material") !== "midnight" ? { material: query.get("material") } : {}),
   ...(query.get("theme") ? { colorScheme: query.get("theme") } : {}),
 }));
 if (scene === "cat") localStorage.setItem("skerry-pixel-cat", JSON.stringify({ enabled: true }));

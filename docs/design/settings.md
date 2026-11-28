@@ -124,7 +124,7 @@ Updated state:
 - Terminology: "Collapse" refers strictly to returning from expanded to collapsed state; island docking to screen top with edge exposed is "Tuck to edge", revealing is "Reveal". (User confirmed)
 - Live preview: adjusting appearance (collapsed items preview collapsed island, expanded items preview expanded island) or selecting tuck style (immediately tucks per selected style) previews effect on island, reverting to original state after approx 2.5 seconds of inactivity; does not auto-revert when mouse rests on island, clicked, or in game mode. (
 - Top row of Appearance -> Style is "Color scheme": Dark / Light / Follow system segmented buttons, default Dark, non-wrapping on narrow windows. Settings, clipboard, translation, and on-island settings switch together. (
-- Below "Color scheme" sits "Material": Graphite / Liquid / Frosted / Aurora / Prism, default Graphite (replaced Classic on 2026-11-27); selecting glass displays indented "Glass strength" slider. Non-wrapping on narrow windows. (
+- Below "Color scheme" sits "Material": Midnight / Graphite / Liquid / Frosted / Aurora / Prism, default Midnight (since 2026-11-28); selecting glass displays indented "Glass strength" slider. Non-wrapping on narrow windows. (
 
 ## Plugins Page (API v1)
 

@@ -69,7 +69,7 @@ Skerry brings a streamlined, glanceable floating island to the top of your Windo
 - **Live PC Health**: Real-time CPU usage with sparklines, memory consumption, disk storage, and network speed cards on the island, plus volume and (on laptops) brightness sliders at the top of the System page.
 - **Microphone and Camera Indicator**: A small dot on the collapsed island while an app is using the microphone or camera (on by default, switchable under Settings -> System).
 - **Instant Translation**: Dedicated fast translation window (`Ctrl + Shift + F`) supporting free providers and custom OpenAI-compatible endpoints.
-- **Fluid Visual Styles**: Graphite, Liquid Glass, Frosted Glass, Aurora, and Prism materials with adaptive dark and light themes.
+- **Fluid Visual Styles**: Midnight (the default: deep ink-indigo with a violet-to-rose horizon glow), Graphite, Liquid Glass, Frosted Glass, Aurora, and Prism materials with adaptive dark and light themes.
 - **Settings Search**: Type in the box above the settings pages to jump to a page, group or setting.
 - **In-App Changelog**: Read the release notes under Settings -> Changelog.
 
@@ -130,7 +130,7 @@ Skerry brings a streamlined, glanceable floating island to the top of your Windo
 <!-- screenshot-settings.png and screenshot-themes.png placeholders -->
 | Preferences &amp; Configuration | Appearance and Material Themes |
 | :---: | :---: |
-| <img src="docs/assets/screenshots/screenshot-settings.png" alt="Skerry Settings window" width="460"><br><b>Settings Window</b>: Control toggles, behavior, shortcuts, and startup options. | <img src="docs/assets/screenshots/screenshot-themes.png" alt="Theme customization preview" width="460"><br><b>Visual Styles</b>: Classic, Liquid Glass, and Frosted Glass in dark and light modes. |
+| <img src="docs/assets/screenshots/screenshot-settings.png" alt="Skerry Settings window" width="460"><br><b>Settings Window</b>: Control toggles, behavior, shortcuts, and startup options. | <img src="docs/assets/screenshots/screenshot-themes.png" alt="Theme customization preview" width="460"><br><b>Visual Styles</b>: Midnight, Liquid Glass, and Frosted Glass. |
 
 <sub>*Note: All screenshots illustrate fictional demo data in accordance with [docs/SCREENSHOTS.md](docs/SCREENSHOTS.md).*</sub>
 
