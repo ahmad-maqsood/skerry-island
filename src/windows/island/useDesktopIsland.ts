@@ -18,17 +18,18 @@ type DesktopIslandOptions = {
 /**
  * "Always display island on the desktop": while no app window is open the island sits out in its
  * collapsed form (and one that was tucked comes out); when a window opens, even a small one, it
- * tucks. Returns whether the desktop is clear, which also holds the idle tuck off (keepVisible).
- * Needs "Tuck to the edge" on, and does nothing while the island is always displayed.
+ * tucks, if "Tuck to the edge when idle" is on. Returns whether the desktop is clear, which also
+ * holds the idle tuck off (keepVisible). Does nothing while the island is always displayed.
  */
 export function useDesktopIsland({ settings, mode, isTucked, gameHolds, tuckForWindow, revealIsland }: DesktopIslandOptions) {
-  const watching = settings.alwaysShowOnDesktop && settings.autoTuck && !settings.alwaysShowIsland;
+  const watching = settings.alwaysShowOnDesktop && !settings.alwaysShowIsland;
   const desktopClear = useDesktopClear(watching);
-  const latest = useRef({ mode, isTucked, gameHolds });
+  const { autoTuck } = settings;
+  const latest = useRef({ mode, isTucked, gameHolds, autoTuck });
   const previous = useRef<boolean | null>(null);
   // Declared first: effects run in order, and the one below reads what this keeps.
   useEffect(() => {
-    latest.current = { mode, isTucked, gameHolds };
+    latest.current = { mode, isTucked, gameHolds, autoTuck };
   });
   // Only a change moves the island (tuckRules.ts), so a minimize on the clear desktop stays.
   useEffect(() => {

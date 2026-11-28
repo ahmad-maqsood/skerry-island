@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { DEFAULT_SETTINGS } from "../../src/features/appearance/settings.ts";
 import { keepIslandVisible, keepVisibleChangesAt } from "../../src/windows/island/keepVisible.ts";
-import { MESSAGE_PEEK_RETRACT_MS, desktopAction, messagePeekSettles, retractsPeek, revealsForKeepVisible } from "../../src/windows/island/tuckRules.ts";
+import { MESSAGE_PEEK_RETRACT_MS, desktopAction, messagePeekSettles, retractsPeek, revealsForKeepVisible, revealsForTuckingOff } from "../../src/windows/island/tuckRules.ts";
 
 const base = { isTucked: true, isPeeking: false, tuckedAutomatically: true, keepVisible: true,
   hasMessagePreview: false, isPreviewing: false, gameHolds: false };
@@ -59,7 +59,7 @@ test("a pop-up's peek retracts within the pop-up's own exit", () => {
   assert.ok(MESSAGE_PEEK_RETRACT_MS >= 200 && MESSAGE_PEEK_RETRACT_MS <= 400);
 });
 
-const desk = { mode: "collapsed", isTucked: false, gameHolds: false };
+const desk = { mode: "collapsed", isTucked: false, gameHolds: false, autoTuck: true };
 
 test("the desktop clearing brings out a tucked island, however it was tucked", () => {
   assert.equal(desktopAction(false, true, { ...desk, isTucked: true }), "reveal");
@@ -86,4 +86,19 @@ test("only a change moves the island: a minimize on the clear desktop stays mini
 test("game mode's hold is never undone by the desktop", () => {
   assert.equal(desktopAction(false, true, { ...desk, isTucked: true, gameHolds: true }), null);
   assert.equal(desktopAction(true, false, { ...desk, gameHolds: true }), null);
+});
+
+test("switching idle tucking off brings a tucked or peeking island out, once", () => {
+  const tucked = { isTucked: true, isPeeking: false, gameHolds: false };
+  assert.equal(revealsForTuckingOff(true, false, tucked), true);
+  assert.equal(revealsForTuckingOff(true, false, { ...tucked, isTucked: false, isPeeking: true }), true);
+  assert.equal(revealsForTuckingOff(false, false, tucked), false, "minimized later stays minimized");
+  assert.equal(revealsForTuckingOff(false, true, tucked), false);
+  assert.equal(revealsForTuckingOff(true, false, { ...tucked, gameHolds: true }), false);
+});
+
+test("with idle tucking off the desktop still brings the island out, and a window does not tuck it", () => {
+  const state = { mode: "collapsed", isTucked: false, gameHolds: false, autoTuck: false };
+  assert.equal(desktopAction(false, true, { ...state, isTucked: true }), "reveal");
+  assert.equal(desktopAction(true, false, state), null);
 });

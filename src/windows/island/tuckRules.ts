@@ -32,6 +32,20 @@ export function revealsForKeepVisible(state: TuckState): boolean {
 }
 
 /**
+ * Whether the island comes out because the user has just stopped it tucking itself: "Tuck to the
+ * edge when idle" switched off, or "Always display island" switched on. Without this the switch
+ * only stopped the next tuck, and an island already at the edge (or peeking, due back) stayed there.
+ * Only the change moves it, so minimizing afterwards still works.
+ */
+export function revealsForTuckingOff(
+  wasTucking: boolean,
+  isTucking: boolean,
+  state: Pick<TuckState, "isTucked" | "isPeeking" | "gameHolds">,
+): boolean {
+  return wasTucking && !isTucking && (state.isTucked || state.isPeeking) && !state.gameHolds;
+}
+
+/**
  * Whether a peeking island slides back now that the peek is over. A message preview holds
  * it; and an island that tucked itself does not tuck again while it should stay visible.
  */
@@ -70,8 +84,9 @@ export function messagePeekSettles(state: TuckState & { messagePeek: boolean; is
  *
  * - The desktop is clear: the island comes out of any tuck, a minimized one included, and sits in
  *   its collapsed form (`reveal`). It does not undo a tuck made by game mode.
- * - A window opens while the desktop was clear: a collapsed island tucks (`tuck`). An open panel
- *   is left alone: it collapses on its own, and the ordinary idle tuck follows over the window.
+ * - A window opens while the desktop was clear: with "Tuck to the edge when idle" on, a collapsed
+ *   island tucks (`tuck`). An open panel is left alone: it collapses on its own, and the ordinary
+ *   idle tuck follows over the window. With that switch off, a window never tucks the island.
  * - Over windows from the start (no earlier answer) nothing moves, so switching the setting on or
  *   starting the app does not slam a shown island shut; the idle tuck still applies.
  *
@@ -82,10 +97,10 @@ export type DesktopAction = "reveal" | "tuck" | null;
 export function desktopAction(
   previous: boolean | null,
   desktopClear: boolean | null,
-  state: { mode: IslandMode; isTucked: boolean; gameHolds: boolean },
+  state: { mode: IslandMode; isTucked: boolean; gameHolds: boolean; autoTuck: boolean },
 ): DesktopAction {
   if (desktopClear === null || previous === desktopClear || state.gameHolds) return null;
   if (desktopClear) return state.isTucked ? "reveal" : null;
-  if (previous === null) return null;
+  if (previous === null || !state.autoTuck) return null;
   return state.mode === "collapsed" && !state.isTucked ? "tuck" : null;
 }

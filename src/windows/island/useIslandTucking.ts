@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { IslandSettings } from "../../features/appearance/types";
 import { listenIslandHover } from "./api";
 import { idlePlan } from "./idleCollapse";
 import { keepIslandVisible, keepVisibleChangesAt } from "./keepVisible";
-import { MESSAGE_PEEK_RETRACT_MS, messagePeekSettles, retractsPeek, revealsForKeepVisible } from "./tuckRules";
+import { MESSAGE_PEEK_RETRACT_MS, messagePeekSettles, retractsPeek, revealsForKeepVisible, revealsForTuckingOff } from "./tuckRules";
 import { useIdleTuck, useRevealOnMessage } from "./useIslandAutomation";
 import { isEditingText } from "./useHoverExpand";
 import type { useIslandNavigation } from "./useIslandNavigation";
@@ -41,6 +41,7 @@ export function useIslandTucking({ settings, navigation, hasMessagePreview, acti
   const tuckState = {
     isTucked, isPeeking, tuckedAutomatically, keepVisible, hasMessagePreview, isPreviewing: navigation.isPreviewing, gameHolds,
   };
+  useRevealOnTuckingOff(settings.autoTuck && !settings.alwaysShowIsland, tuckState, revealIsland);
   const settlesMessagePeek = messagePeekSettles({ ...tuckState, messagePeek, isHovering });
   useEffect(() => {
     if (settlesMessagePeek) settleMessagePeek();
@@ -65,6 +66,23 @@ export function useIslandTucking({ settings, navigation, hasMessagePreview, acti
   useRevealOnMessage(hasMessagePreview, isTucked, revealForMessage);
   // A preview holds the peek; the island slides back once it has gone and the cursor is away.
   useTuckPeek(retractsPeek(tuckState), endPeek, messagePeek ? MESSAGE_PEEK_RETRACT_MS : peekRetractDelayMs ?? undefined);
+}
+
+/** Brings the island out when the settings stop it tucking itself (revealsForTuckingOff). */
+function useRevealOnTuckingOff(
+  tucking: boolean,
+  state: Parameters<typeof revealsForTuckingOff>[2] & { isPreviewing: boolean },
+  revealIsland: () => void,
+) {
+  const wasTucking = useRef(tucking);
+  const { isTucked, isPeeking, gameHolds, isPreviewing } = state;
+  useEffect(() => {
+    // A settings preview restores the old state when it ends, so the change waits until then.
+    if (isPreviewing) return;
+    const was = wasTucking.current;
+    wasTucking.current = tucking;
+    if (revealsForTuckingOff(was, tucking, { isTucked, isPeeking, gameHolds })) revealIsland();
+  }, [tucking, isTucked, isPeeking, gameHolds, isPreviewing, revealIsland]);
 }
 
 /**

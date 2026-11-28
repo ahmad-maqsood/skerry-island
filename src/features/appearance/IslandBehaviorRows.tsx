@@ -69,8 +69,8 @@ export function TuckRows({ settings, onSettingsChange }: RowsProps) {
         checked={settings.alwaysShowIsland}
         onChange={(alwaysShowIsland) => update({ alwaysShowIsland })}
       />
-      {/* It tucks and reveals the island, so it needs tucking on; and it is moot while the island is always displayed. */}
-      {settings.alwaysShowIsland || !settings.autoTuck ? null : (
+      {/* It brings the island out on a clear desktop even with idle tucking off; moot while the island is always displayed. */}
+      {settings.alwaysShowIsland ? null : (
         <SettingsToggleRow
           title={t.settings.layout.alwaysShowOnDesktop}
           description={t.settings.layout.alwaysShowOnDesktopHint}
