@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { listenCursorLeftIsland } from "./api";
 import {
-  CAT_WIDTH, cursorFrame, positionAt, RESUME_STEP, routineFrame, TRAVEL, type CatFrame, type Facing,
+  CAT_WIDTH, cursorFrame, homeFrame, positionAt, RESUME_STEP, routineFrame, TRAVEL, type CatFrame, type Facing,
 } from "./brain";
 import { PIXEL_CAT_LANE_WIDTH } from "./model";
+import { freeLeftEdge } from "./room";
 
 /** How long the cat sits up with a "!" when the cursor arrives. */
 const NOTICE_MS = 450;
@@ -47,6 +48,15 @@ export function useCatBrain(laneRef: RefObject<HTMLDivElement | null>, active: b
     };
     const stop = (): CatFrame => ({ ...motion.current.frame, x: here(), moveMs: 0 });
 
+    // Screen px to lane px. The bar is scaled (Appearance → Size), so the box is measured.
+    const toLane = (screenX: number, box: DOMRect) => ((screenX - box.left) * PIXEL_CAT_LANE_WIDTH) / box.width;
+    // Read on every look: the text beside the lane changes while the cursor is there.
+    const leftLimit = () => {
+      const box = lane.getBoundingClientRect();
+      const edge = freeLeftEdge(lane);
+      return edge === null || !box.width ? 0 : Math.min(0, toLane(edge, box));
+    };
+
     const runRoutine = () => {
       const { frame: next, holdMs } = routineFrame(step.current, here(), motion.current.frame.facing);
       show(next);
@@ -59,7 +69,7 @@ export function useCatBrain(laneRef: RefObject<HTMLDivElement | null>, active: b
     const look = () => {
       if (!cursor || performance.now() < noticeUntil) return;
       const facing: Facing = motion.current.frame.facing;
-      const next = cursorFrame(cursor.x, here(), facing, performance.now() - cursor.restSince);
+      const next = cursorFrame(cursor.x, here(), facing, performance.now() - cursor.restSince, leftLimit());
       const now = motion.current.frame;
       // Only a change is applied: restarting the same move or pose would make it stutter.
       const sameMove = next.moveMs > 0 && Math.abs(next.x - now.x) < 1;
@@ -74,16 +84,21 @@ export function useCatBrain(laneRef: RefObject<HTMLDivElement | null>, active: b
       if (!cursor) return;
       cursor = null;
       window.clearInterval(lookTimer);
-      show(stop());
       step.current = RESUME_STEP;
-      runRoutine();
+      const home = homeFrame(here());
+      if (!home) {
+        show(stop());
+        runRoutine();
+        return;
+      }
+      show(home);
+      routineTimer = window.setTimeout(runRoutine, home.moveMs);
     };
 
     const move = (event: PointerEvent) => {
       const box = lane.getBoundingClientRect();
       if (!box.width) return;
-      // The bar is scaled (Appearance → Size), so screen px are turned back into lane px.
-      const x = ((event.clientX - box.left) * PIXEL_CAT_LANE_WIDTH) / box.width;
+      const x = toLane(event.clientX, box);
       const now = performance.now();
       if (!cursor) {
         window.clearTimeout(routineTimer);

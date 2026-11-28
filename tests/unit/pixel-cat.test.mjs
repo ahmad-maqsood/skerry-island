@@ -11,7 +11,7 @@ import {
 } from "../../src/features/pixel-cat/model.ts";
 import { SPRITE_HEIGHT, SPRITE_WIDTH, POSES, PROPS, spriteRuns } from "../../src/features/pixel-cat/sprite.ts";
 import {
-  CAT_WIDTH, cursorFrame, PET_AFTER_MS, positionAt, RESUME_STEP, ROUTINE, routineFrame, TRAVEL,
+  CAT_WIDTH, cursorFrame, homeFrame, PET_AFTER_MS, positionAt, RESUME_STEP, ROUTINE, routineFrame, TRAVEL,
 } from "../../src/features/pixel-cat/brain.ts";
 
 test("the pixel cat is off unless it was switched on", () => {
@@ -147,4 +147,14 @@ test("a cursor past the end of the lane is watched from the end", () => {
   const there = cursorFrame(400, TRAVEL, -1, 5000);
   assert.deepEqual(there, { pose: "alert", x: TRAVEL, moveMs: 0, facing: 1, prop: null });
   assert.equal(cursorFrame(-300, 0, 1, 0).facing, -1);
+});
+
+test("the cat follows the cursor left into empty bar, no further than the room there is", () => {
+  const chasing = cursorFrame(-100, 40, 1, 0, -150);
+  assert.equal(chasing.x, -100 - CAT_WIDTH / 2);
+  assert.equal(chasing.facing, -1);
+  assert.equal(cursorFrame(-400, 40, 1, 0, -150).x, -150);
+  assert.equal(homeFrame(-110).x, 0);
+  assert.equal(homeFrame(-110).moveMs, 1000);
+  assert.equal(homeFrame(0), null);
 });

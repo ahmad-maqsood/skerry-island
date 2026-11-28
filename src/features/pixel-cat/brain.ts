@@ -75,7 +75,6 @@ export const ROUTINE: readonly Step[] = [
 /** Where the routine picks up after the cursor leaves: sitting, then on with the next step. */
 export const RESUME_STEP = ROUTINE.length - 1;
 
-const clampX = (x: number) => Math.min(TRAVEL, Math.max(0, x));
 const moveTime = (from: number, to: number, speed: number) => Math.round((Math.abs(to - from) / speed) * 1000);
 const towards = (from: number, to: number, facing: Facing): Facing => (to > from ? 1 : to < from ? -1 : facing);
 
@@ -96,6 +95,11 @@ export function routineFrame(index: number, x: number, facing: Facing): { frame:
   };
 }
 
+/** A cat that followed the cursor out of its lane runs back to the start of it. */
+export function homeFrame(x: number): CatFrame | null {
+  return x < 0 ? { pose: "run", x: 0, moveMs: moveTime(x, 0, RUN_SPEED), facing: 1, prop: null } : null;
+}
+
 /** Where a straight move from `from` has got to after `elapsedMs`. */
 export function positionAt(from: number, to: number, moveMs: number, elapsedMs: number) {
   if (moveMs <= 0 || elapsedMs >= moveMs) return to;
@@ -105,16 +109,17 @@ export function positionAt(from: number, to: number, moveMs: number, elapsedMs: 
 /**
  * How the cat answers the cursor at `cursorX` (lane px; it may be off either end), from where it
  * is: far away it runs over, nearer it walks, on the cat it swats at the cursor, and a cursor
- * resting there (`stillMs`) is petting, so it purrs. At the end of the lane it sits and watches.
+ * resting there (`stillMs`) is petting, so it purrs. As far as it can go it sits and watches.
+ * `minX` is how far left of its lane it may follow (zero or less, see room.ts).
  */
-export function cursorFrame(cursorX: number, x: number, facing: Facing, stillMs: number): CatFrame {
+export function cursorFrame(cursorX: number, x: number, facing: Facing, stillMs: number, minX = 0): CatFrame {
   const gap = cursorX - (x + CAT_WIDTH / 2);
   const look: Facing = Math.abs(gap) < 3 ? facing : gap > 0 ? 1 : -1;
   const stay = { x, moveMs: 0, facing: look };
   if (Math.abs(gap) <= REACH) {
     return stillMs >= PET_AFTER_MS ? { ...stay, pose: "happy", prop: "hearts" } : { ...stay, pose: "bat", prop: null };
   }
-  const target = clampX(cursorX - CAT_WIDTH / 2);
+  const target = Math.min(TRAVEL, Math.max(minX, cursorX - CAT_WIDTH / 2));
   if (Math.abs(target - x) < 1) return { ...stay, pose: "alert", prop: null };
   const run = Math.abs(target - x) > RUN_GAP;
   return {
