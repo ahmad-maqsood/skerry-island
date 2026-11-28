@@ -130,7 +130,8 @@ if (!automated) {
       // General 23 -> 24: the Always display island on the desktop row.
       // General 24 -> 25: the Show minimize button row.
       // Appearance 30 -> 31: the Pixel cat switch.
-      const maxRows = category === "general" ? 25 : category === "appearance" ? 31 : category === "clipboard" ? 13 : category === "system" ? 11 : category === "todos" ? 9 : 8;
+      // General 25 -> 26: the Hide shortcut switch.
+      const maxRows = category === "general" ? 26 : category === "appearance" ? 31 : category === "clipboard" ? 13 : category === "system" ? 11 : category === "todos" ? 9 : 8;
       if (category === "appearance") {
         const row = [...panel.querySelectorAll<HTMLElement>(".settings-row")].find((item) => item.textContent?.includes("Top edge curves"))!;
         const toggle = row.querySelector<HTMLInputElement>("[role='switch']")!;

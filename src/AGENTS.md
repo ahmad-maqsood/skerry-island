@@ -17,6 +17,7 @@ src/
 │   ├── todos/               # Todos, daily notes, archive, Markdown export and optional reverse sync
 │   ├── media/               # Media controls, global shortcuts (useMusicShortcuts), waveform, player diagnostic cards, and compatibility settings; lyrics/ for synced lyrics (LRC parsing, progress tracking, click-to-seek, settings)
 │   ├── clipboard/           # Clipboard history, shortcuts
+│   ├── hide-shortcut/       # The global shortcut that hides and shows the island: setting, registration, settings rows
 │   ├── widgets/             # Settings → Advanced → Widgets: typed IPC, switches hook, settings section; clock/ is the desktop clock (glyphs.ts weekday letters, text.ts lines, ink.ts colour choice from the backdrop, ClockWidget)
 │   ├── live-wallpaper/      # Settings → Advanced live wallpaper: typed IPC, state hook, settings section (playback is native)
 │   ├── config-transfer/     # Configuration backup / transfer: format validation, prefix filtering, batch storage restoration, native dialogs, and startup restore

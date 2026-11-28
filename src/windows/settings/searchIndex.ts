@@ -40,6 +40,8 @@ export const SETTINGS_SEARCH_INDEX: readonly SettingsSearchEntry[] = [
   { page: "general", group: "Tuck to the edge", title: "Tuck the collapsed island" },
   { page: "general", group: "Tuck to the edge", title: "Stay out while lyrics show" },
   { page: "general", group: "Tuck to the edge", title: "Stay out while a to-do is timed" },
+  { page: "general", group: "Hide the island" },
+  { page: "general", group: "Hide the island", title: "Hide shortcut" },
   { page: "general", group: "Game mode" },
   { page: "general", group: "Game mode", title: "Quiet in full screen" },
   { page: "general", group: "Game mode", title: "Still show notifications" },

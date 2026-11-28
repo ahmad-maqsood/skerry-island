@@ -68,6 +68,8 @@ mockIPC((command, payload) => {
     case "export_config": return true;
     case "read_config_import": return null;
     case "get_media_shortcut_errors": return {};
+    case "get_island_hide_shortcut_error": return null;
+    case "set_island_hide_shortcut": return null;
     case "set_media_shortcuts": mediaShortcutCalls.push({ enabled: Boolean(args.enabled), shortcuts: args.shortcuts as MusicShortcuts }); return null;
     case "set_launch_at_startup": return null;
     case "get_default_todo_save_directory": return "";

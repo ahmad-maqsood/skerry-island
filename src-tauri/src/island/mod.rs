@@ -6,6 +6,7 @@ pub(crate) mod focus;
 mod follow;
 mod geometry;
 mod glass;
+pub(crate) mod hide_hotkey;
 pub(crate) mod outside_click;
 pub(crate) mod passthrough;
 mod state;
@@ -305,6 +306,21 @@ pub(crate) fn hide_island(app: &AppHandle) {
     }
 }
 
+/// The hide shortcut: hides a visible island, shows a hidden one. Showing does not take the
+/// focus, so typing carries on in the app in front.
+pub(crate) fn toggle_island(app: &AppHandle) {
+    let visible = main_window(app).and_then(|window| window.is_visible().map_err(|error| error.to_string()));
+    match visible {
+        Ok(true) => hide_island(app),
+        Ok(false) => {
+            if let Err(error) = show_island_window(app, false) {
+                eprintln!("failed to show the island: {error}");
+            }
+        }
+        Err(error) => eprintln!("failed to toggle the island: {error}"),
+    }
+}
+
 /// Game mode's quiet changed (see `state::set_game_quiet`).
 #[tauri::command]
 pub fn set_island_game_quiet(quiet: bool) {
@@ -329,6 +345,8 @@ macro_rules! tauri_commands {
             crate::island::set_island_game_quiet,
             crate::island::show_ready_island,
             crate::island::minimize_island,
+            crate::island::hide_hotkey::set_island_hide_shortcut,
+            crate::island::hide_hotkey::get_island_hide_shortcut_error,
             crate::island::focus::take_island_hover_focus,
             crate::island::focus::release_island_hover_focus,
             crate::island::outside_click::set_island_outside_click_watch,

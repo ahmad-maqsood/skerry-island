@@ -30,11 +30,12 @@ export function findShortcutOwner(shortcut: string, owners: readonly ShortcutOwn
 }
 
 /** The shortcuts of the optional features that are switched on. */
-export function collectShortcutOwners({ clipboard, translation, music }: {
+export function collectShortcutOwners({ clipboard, translation, music, hide }: {
   clipboard: ShortcutOwner & { enabled: boolean };
   translation: ShortcutOwner & { enabled: boolean };
   music: readonly ShortcutOwner[];
+  hide?: ShortcutOwner & { enabled: boolean };
 }): ShortcutOwner[] {
-  return [...[clipboard, translation].filter((owner) => owner.enabled), ...music]
+  return [...[clipboard, translation, ...(hide ? [hide] : [])].filter((owner) => owner.enabled), ...music]
     .filter((owner) => Boolean(shortcutKey(owner.shortcut)));
 }

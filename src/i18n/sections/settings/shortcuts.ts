@@ -11,6 +11,8 @@ export type SettingsShortcutsText = {
   music: { playPause: string; previous: string; next: string };
   clear: string;
   unassigned: string;
+  /** Settings → General → Hide the island. */
+  hide: { title: string; enable: string; enableHint: (shortcut: string) => string; keys: string; footer: string };
 };
 
 
@@ -18,6 +20,13 @@ export const en: SettingsShortcutsText = {
   music: { playPause: "Play / pause", previous: "Previous track", next: "Next track" },
   clear: "Clear shortcut",
   unassigned: "Not set",
+  hide: {
+    title: "Hide the island",
+    enable: "Hide shortcut",
+    enableHint: (shortcut) => `Press ${shortcut} in any program to hide the island, and press it again to bring it back.`,
+    keys: "Hide or show the island",
+    footer: "Opening Skerry again also brings a hidden island back, and so does Show Island in the tray menu.",
+  },
   globalHint: "These work in any program. Click a button, then press a new key combination; Esc cancels.",
   openTranslation: "Open quick translation",
   translationShortcutEnabled: "Enable translation shortcut",

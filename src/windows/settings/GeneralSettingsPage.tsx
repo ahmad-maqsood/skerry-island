@@ -9,12 +9,14 @@ import { useLaunchAtStartup } from "./useLaunchAtStartup";
 import { ConfigTransferSection } from "../../features/config-transfer/ConfigTransferSection";
 import { TrayIconRow } from "./TrayIconRow";
 import { IslandTabsGroup } from "./IslandTabsGroup";
+import { HideShortcutGroup } from "./HideShortcutGroup";
 import type { SystemNotificationsController } from "../../features/messages/system-notifications/useSystemNotifications";
 
 /**
  * Settings → General: how the island behaves, most used first (docs/design/settings.md): startup
  * and language; which tabs the island has; opening and closing; the position; tucking to the edge, with when not to under
- * auto-tuck; game mode; backup and transfer. How it looks, tucked included, is on appearance.
+ * auto-tuck; the hide shortcut;
+ * game mode; backup and transfer. How it looks, tucked included, is on appearance.
  */
 export function GeneralSettingsPage({
   locale,
@@ -66,6 +68,7 @@ export function GeneralSettingsPage({
         <TuckRows {...rows} />
         <KeepVisibleRows {...rows} />
       </SettingsGroup>
+      <HideShortcutGroup settings={settings} />
       <SettingsGroup title={t.settings.layout.gameTitle}>
         <GameModeRow {...rows} />
       </SettingsGroup>
