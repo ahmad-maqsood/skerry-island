@@ -9,17 +9,10 @@ import {
   pixelCatWidth,
   slotsHiddenWithCat,
 } from "../../src/features/pixel-cat/model.ts";
+import { SPRITE_HEIGHT, SPRITE_WIDTH, POSES, PROPS, spriteRuns } from "../../src/features/pixel-cat/sprite.ts";
 import {
-  SPRITE_HEIGHT,
-  SPRITE_ROWS,
-  SPRITE_WIDTH,
-  BODY_RUNS,
-  STRIDE_RUNS,
-  TOGETHER_RUNS,
-  spriteRuns,
-  POSE_ROWS,
-  BLINK_PIXEL,
-} from "../../src/features/pixel-cat/sprite.ts";
+  CAT_WIDTH, cursorFrame, PET_AFTER_MS, positionAt, RESUME_STEP, ROUTINE, routineFrame, TRAVEL,
+} from "../../src/features/pixel-cat/brain.ts";
 
 test("the pixel cat is off unless it was switched on", () => {
   for (const value of [undefined, null, [], "bad", 1, {}, { enabled: "true" }, { enabled: 1 }]) {
@@ -65,12 +58,29 @@ test("the cat's lane moves up beside the text so the status icons gather at the 
   assert.deepEqual(catBesideText(["pulse", "shelf", "clock"], "clock", "text"), ["pulse", "shelf", "clock"]);
 });
 
-test("every sprite row is the same width and the grid has the height the component draws", () => {
-  assert.equal(SPRITE_ROWS.length, SPRITE_HEIGHT + 2);
-  for (const row of SPRITE_ROWS) assert.equal(row.length, SPRITE_WIDTH);
-  for (const run of [...BODY_RUNS, ...STRIDE_RUNS, ...TOGETHER_RUNS]) {
-    assert.ok(run.x >= 0 && run.x + run.width <= SPRITE_WIDTH);
-    assert.ok(run.y >= 0 && run.y < SPRITE_HEIGHT);
+test("every frame of every pose fits the grid the component draws", () => {
+  for (const [name, art] of Object.entries(POSES)) {
+    assert.ok(art.frames.length === 1 || (art.frames.length === 2 && art.frameMs > 0), name);
+    for (const rows of art.frames) {
+      assert.equal(rows.length, SPRITE_HEIGHT, name);
+      for (const row of rows) assert.match(row, new RegExp(`^[kep.]{${SPRITE_WIDTH}}$`), name);
+    }
+  }
+});
+
+test("a pose that blinks has its open eye under the blink in every frame", () => {
+  for (const [name, art] of Object.entries(POSES)) {
+    if (!art.blink) continue;
+    for (const rows of art.frames) {
+      // The galloping and leaping frames share the head, so the eye never moves between frames.
+      assert.equal(rows[art.blink.y][art.blink.x], "e", name);
+    }
+  }
+});
+
+test("the small pictures are rectangular", () => {
+  for (const rows of Object.values(PROPS)) {
+    for (const row of rows) assert.equal(row.length, rows[0].length);
   }
 });
 
@@ -85,19 +95,56 @@ test("sprite runs join neighbouring pixels of one kind and split at other kinds 
   assert.deepEqual(spriteRuns(["...."]), []);
 });
 
-test("the cat has one eye and one nose, and the two leg poses sit below the body", () => {
-  assert.equal(BODY_RUNS.filter((run) => run.kind === "eye").length, 1);
-  assert.equal(BODY_RUNS.filter((run) => run.kind === "nose").length, 1);
-  const bodyRows = Math.max(...BODY_RUNS.map((run) => run.y));
-  for (const run of [...STRIDE_RUNS, ...TOGETHER_RUNS]) assert.ok(run.y > bodyRows);
+test("the routine uses many poses, stays in its lane and moves only while moving poses show", () => {
+  let x = 0;
+  let facing = 1;
+  const seen = new Set();
+  for (let index = 0; index < ROUTINE.length * 2; index++) {
+    const { frame, holdMs } = routineFrame(index, x, facing);
+    assert.ok(holdMs > 0, `step ${index}`);
+    assert.ok(frame.x >= 0 && frame.x <= TRAVEL);
+    if (frame.moveMs > 0) {
+      assert.ok(["walk", "run", "leap"].includes(frame.pose), `step ${index}`);
+      assert.equal(frame.facing, frame.x > x ? 1 : -1, "a moving cat faces where it goes");
+    }
+    seen.add(frame.pose);
+    ({ x, facing } = frame);
+  }
+  for (const pose of ["walk", "run", "sit", "groom", "yawn", "bat", "loaf", "crouch", "leap", "stretch", "sleep"]) {
+    assert.ok(seen.has(pose), pose);
+  }
+  assert.equal(ROUTINE[RESUME_STEP].pose, "sit");
 });
 
-test("every extra pose fits the same grid, and the blink lands on the sitting eye", () => {
-  for (const [name, rows] of Object.entries(POSE_ROWS)) {
-    assert.equal(rows.length, SPRITE_HEIGHT, name);
-    for (const row of rows) assert.equal(row.length, SPRITE_WIDTH, name);
-  }
-  for (const rows of [SPRITE_ROWS, POSE_ROWS.sitTailDown, POSE_ROWS.sitTailUp]) {
-    assert.equal(rows[BLINK_PIXEL.y][BLINK_PIXEL.x], "e");
-  }
+test("a move under way is found part of the way along", () => {
+  assert.equal(positionAt(0, 80, 1000, 250), 20);
+  assert.equal(positionAt(80, 0, 1000, 500), 40);
+  assert.equal(positionAt(0, 80, 1000, 5000), 80);
+  assert.equal(positionAt(0, 80, 0, 0), 80);
+});
+
+test("the cat runs to a far cursor, walks to a near one and faces it", () => {
+  const far = cursorFrame(90, 0, -1, 0);
+  assert.equal(far.pose, "run");
+  assert.equal(far.facing, 1);
+  assert.equal(far.x, 90 - CAT_WIDTH / 2);
+  assert.ok(far.moveMs > 0);
+  const near = cursorFrame(40, 0, 1, 0);
+  assert.equal(near.pose, "walk");
+  assert.equal(cursorFrame(10, 60, 1, 0).facing, -1);
+});
+
+test("the cat swats at a cursor on it and purrs when the cursor rests there", () => {
+  assert.deepEqual(cursorFrame(20, 0, 1, 0), { pose: "bat", x: 0, moveMs: 0, facing: 1, prop: null });
+  const petted = cursorFrame(20, 0, 1, PET_AFTER_MS);
+  assert.equal(petted.pose, "happy");
+  assert.equal(petted.prop, "hearts");
+});
+
+test("a cursor past the end of the lane is watched from the end", () => {
+  const going = cursorFrame(400, 0, 1, 0);
+  assert.equal(going.x, TRAVEL);
+  const there = cursorFrame(400, TRAVEL, -1, 5000);
+  assert.deepEqual(there, { pose: "alert", x: TRAVEL, moveMs: 0, facing: 1, prop: null });
+  assert.equal(cursorFrame(-300, 0, 1, 0).facing, -1);
 });

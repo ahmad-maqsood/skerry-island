@@ -11,7 +11,7 @@ export * from "./settingsLimits.ts";
 
 /** Whether a material is one of the glasses (the glass strength applies, the native side is told). */
 export function isGlass(material: Material) {
-  return material !== "graphite";
+  return material !== "graphite" && material !== "midnight";
 }
 
 /**

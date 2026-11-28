@@ -1,0 +1,89 @@
+/*
+ * Midnight, the default material: a deep ink-indigo surface with a "horizon" along its bottom
+ * edge, violet to blue to rose, and a rim that carries the same colours. A soft light from the
+ * open page's accent falls from above. It is a solid fill (no capture, no native glass), so it
+ * reads the same over any wallpaper, and the opacity setting and colour pickers still apply: the
+ * chosen island colour makes up half of the base.
+ * The glows stay at the bottom and centre, so the shoulders, which inherit this background and
+ * reach past both sides, meet the screen edge in the plain base colour.
+ */
+.island.island--material-midnight {
+  --midnight-violet: 124, 92, 255;
+  --midnight-blue: 72, 156, 255;
+  --midnight-rose: 255, 122, 150;
+  --island-rim: rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(48% 52% at 18% 108%, rgba(var(--midnight-violet), 0.34), transparent 100%),
+    radial-gradient(46% 48% at 82% 110%, rgba(var(--midnight-rose), 0.24), transparent 100%),
+    radial-gradient(52% 38% at 50% 112%, rgba(var(--midnight-blue), 0.22), transparent 100%),
+    radial-gradient(52% 40% at 50% -12%, rgba(var(--glass-page-accent), 0.1), transparent 100%),
+    color-mix(in srgb, var(--island-fill, var(--island-background-color)) 50%, #0b0d2b);
+}
+
+/* The collapsed bar is shallow: the same colours sit lower and a little stronger, as one glow. */
+.island.island--material-midnight.island--collapsed {
+  background:
+    radial-gradient(40% 90% at 24% 118%, rgba(var(--midnight-violet), 0.46), transparent 100%),
+    radial-gradient(38% 80% at 76% 120%, rgba(var(--midnight-rose), 0.34), transparent 100%),
+    radial-gradient(40% 66% at 50% 122%, rgba(var(--midnight-blue), 0.34), transparent 100%),
+    color-mix(in srgb, var(--island-fill, var(--island-background-color)) 50%, #0b0d2b);
+}
+
+/* The shadow goes for keyboard focus, which draws its own. */
+.island.island--material-midnight:not(:has(:focus-visible)) {
+  box-shadow: 0 8px 22px rgba(8, 6, 30, 0.34);
+}
+
+/*
+ * The horizon rim: a 1px gradient ring, cut out of a box the size of the island with two masks (a
+ * box-shadow cannot be a gradient): one keeps the ring, one fades it out towards the top, so the
+ * attached island has no line along the screen edge.
+ */
+.island--material-midnight .island__surface::after {
+  --midnight-rim-start: 55%;
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: 1px;
+  border-radius: inherit;
+  corner-shape: var(--island-corner-shape, round);
+  background: linear-gradient(90deg,
+    rgba(var(--midnight-violet), 0.9),
+    rgba(var(--midnight-blue), 0.95) 34%,
+    rgba(214, 205, 255, 0.95) 56%,
+    rgba(var(--midnight-rose), 0.95) 82%,
+    rgba(255, 184, 120, 0.85));
+  -webkit-mask: linear-gradient(transparent var(--midnight-rim-start), #000), linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: source-in, xor;
+  mask: linear-gradient(transparent var(--midnight-rim-start), #000), linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: intersect, exclude;
+  pointer-events: none;
+}
+
+/* The collapsed bar is shallow, so more of its sides carry the colour. */
+.island--material-midnight.island--collapsed .island__surface::after {
+  --midnight-rim-start: 30%;
+}
+
+/* Not redrawn on every frame of the spring (useMotionLayer.ts): it returns once the shape settles. */
+.island--material-midnight[data-moving] .island__surface::after {
+  visibility: hidden;
+}
+
+/* On a light island: pearl, with the same horizon in softer washes and a deeper rim. */
+[data-tone="light"] .island.island--material-midnight {
+  --midnight-violet: 122, 94, 235;
+  --midnight-blue: 52, 132, 236;
+  --midnight-rose: 236, 98, 138;
+  --island-rim: rgba(40, 30, 90, 0.08);
+  background:
+    radial-gradient(48% 52% at 18% 108%, rgba(var(--midnight-violet), 0.2), transparent 100%),
+    radial-gradient(46% 48% at 82% 110%, rgba(var(--midnight-rose), 0.18), transparent 100%),
+    radial-gradient(52% 38% at 50% 112%, rgba(var(--midnight-blue), 0.14), transparent 100%),
+    color-mix(in srgb, var(--island-fill, var(--island-background-color)) 94%, #a79bff);
+}
+
+[data-tone="light"] .island.island--material-midnight:not(:has(:focus-visible)) {
+  box-shadow: 0 8px 22px rgba(40, 30, 90, 0.16);
+}

@@ -42,6 +42,7 @@ export function MaterialRows({ settings, onSettingsChange }: RowsProps) {
   const t = useTranslation();
   const text = t.settings.appearance;
   const materials = [
+    { value: "midnight", label: text.midnight },
     { value: "graphite", label: text.graphite },
     { value: "liquidGlass", label: text.liquidGlass },
     { value: "frostedGlass", label: text.frostedGlass },

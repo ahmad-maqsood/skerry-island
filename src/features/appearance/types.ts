@@ -1,14 +1,15 @@
 export type TranslationTarget = "window" | "island";
 
 /**
- * The island's material: graphite (a flat fill with a satin finish; it took the place of "classic"
+ * The island's material: midnight (the default: a solid ink-indigo fill with a horizon glow along
+ * the bottom edge and a gradient rim), graphite (a flat fill with a satin finish; it took the place of "classic"
  * on 2026-11-27), liquid glass (a nearly clear pane with lit edges),
  * frosted glass (a milky pane), aurora (a smoky pane lit from below by drifting northern-light
  * colour) or prism (a clear crystal pane with an iridescent film and a rim that splits the light).
  * All the glasses are drawn in CSS over a clear window: nothing blurs the desktop behind them
  * (island/glass.rs).
  */
-export type Material = "graphite" | "liquidGlass" | "frostedGlass" | "aurora" | "prism";
+export type Material = "midnight" | "graphite" | "liquidGlass" | "frostedGlass" | "aurora" | "prism";
 /** Colour scheme of the island and the windows: dark, light, or whichever Windows uses. */
 export type ColorScheme = "dark" | "light" | "system";
 export type IslandFont = "system" | "pixel";
@@ -231,7 +232,7 @@ export type IslandSettings = {
 };
 
 export type LegacyIslandSettings = Partial<IslandSettings> & {
-  /** Before 2026-11-14: "classic" or "liquidGlass", now `material` ("classic" reads as "graphite"). */
+  /** Before 2026-11-14: "classic" or "liquidGlass", now `material` ("classic" reads as the default). */
   appearanceMode?: unknown;
   margin?: number;
   sizeScale?: number;

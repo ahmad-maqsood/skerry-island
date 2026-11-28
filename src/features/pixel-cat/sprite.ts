@@ -1,7 +1,7 @@
 /**
- * The cat as a pixel grid, facing right: `k` is fur, `e` an eye, `p` the nose, `.` nothing.
- * Every row is SPRITE_WIDTH characters wide. Walking, the body is drawn once and the two leg
- * poses swap; sitting (two tail positions), stretching and sleeping are whole pictures.
+ * The cat as pixel grids, facing right: `k` is fur, `e` an eye, `p` pink (nose, mouth, tongue),
+ * `.` nothing. Every picture is SPRITE_WIDTH by SPRITE_HEIGHT. A pose is one picture, or two
+ * that swap in turn.
  */
 export const SPRITE_WIDTH = 16;
 export const SPRITE_HEIGHT = 9;
@@ -15,35 +15,100 @@ const BODY = [
   "..kkkkkkkkkkkkk.",
   "...kkkkkkkkkkk..",
 ] as const;
-const LEGS_STRIDE = [
-  "..k.k.......k.k.",
-  "..k.k.......k.k.",
-] as const;
-const LEGS_TOGETHER = [
-  "...kk........kk.",
-  "...k.........k..",
+const WALK_STRIDE = [...BODY, "..k.k.......k.k.", "..k.k.......k.k."] as const;
+const WALK_TOGETHER = [...BODY, "...kk........kk.", "...k.........k.."] as const;
+/** Stretched out in the air: the gallop's long frame, and the pounce. */
+const LEAP = [
+  "..........k....k",
+  "..........kk..kk",
+  "k.........kkkkkk",
+  "kk........kekkkp",
+  ".kkkkkkkkkkkkkk.",
+  "...kkkkkkkkkkk..",
+  "..kkk.......kkk.",
+  ".kk..........kk.",
+  "................",
 ] as const;
 
-const SIT_HEAD_AND_BACK = [
+const EARS = ["..........k....k", "..........kk..kk", "..........kkkkkk"] as const;
+const OPEN_EYE = "..........kekkkp";
+/** Eyes shut to a line: content, yawning or washing. */
+const SHUT_EYE = "..........keekkp";
+const SIT_BACK = [".........kkkkkk.", ".......kkkkkkk.."] as const;
+const SIT_TAIL_DOWN = ["......kkkkkkkk..", ".....kkkkkkk.k..", ".kkkkkkkkkkk.kk."] as const;
+const SIT_TAIL_UP = [".k....kkkkkkkk..", ".k...kkkkkkk.k..", "..kkkkkkkkkk.kk."] as const;
+const sit = (eye: string, tail: readonly string[]) => [...EARS, eye, ...SIT_BACK, ...tail];
+
+/** A front paw up at the mouth, the tongue on it, then lowered a little. */
+const GROOM_LICK = [
+  "................",
+  ...EARS,
+  ".......kkkkeekkk",
+  "......kkkkkkkkp.",
+  ".....kkkkkkk.kpk",
+  ".....kkkkkk.kk..",
+  ".kkkkkkkkkkkk...",
+] as const;
+const GROOM_LIFT = [
+  ...EARS,
+  SHUT_EYE,
+  ".........kkkkkk.",
+  ".......kkkkkkkpk",
+  "......kkkkkkk.kk",
+  ".....kkkkkkk.kk.",
+  ".kkkkkkkkkkkk...",
+] as const;
+
+const yawn = (mouth: readonly [string, string]) => [...EARS, SHUT_EYE, ...mouth, ...SIT_TAIL_DOWN];
+const YAWN_SMALL = yawn([".........kkkkkp.", ".......kkkkkkk.."]);
+const YAWN_WIDE = yawn([".........kkkkpp.", ".......kkkkkkpp."]);
+
+/** A front paw swiping at something just ahead. */
+const BAT_LOW = [
+  ...EARS, OPEN_EYE,
+  ".........kkkkkk.",
+  ".......kkkkkkk..",
+  "......kkkkkkkkkk",
+  ".....kkkkkkk....",
+  ".kkkkkkkkkkk.kk.",
+] as const;
+const BAT_HIGH = [
+  ...EARS, OPEN_EYE,
+  ".........kkkkkkk",
+  ".......kkkkkkk.k",
+  "......kkkkkkkk..",
+  ".....kkkkkkk....",
+  ".kkkkkkkkkkk.kk.",
+] as const;
+
+/** Paws tucked under: the loaf. */
+const LOAF = [
+  "................",
+  "................",
   "..........k....k",
   "..........kk..kk",
   "..........kkkkkk",
   "..........kekkkp",
-  ".........kkkkkk.",
-  ".......kkkkkkk..",
+  "...kkkkkkkkkkkk.",
+  "..kkkkkkkkkkkkk.",
+  ".kkkkkkkkkkkkk..",
 ] as const;
-const SIT_TAIL_DOWN = [
-  ...SIT_HEAD_AND_BACK,
-  "......kkkkkkkk..",
-  ".....kkkkkkk.k..",
-  ".kkkkkkkkkkk.kk.",
-] as const;
-const SIT_TAIL_UP = [
-  ...SIT_HEAD_AND_BACK,
-  ".k....kkkkkkkk..",
-  ".k...kkkkkkk.k..",
-  "..kkkkkkkkkk.kk.",
-] as const;
+
+/** Head low and back end up, wiggling before a pounce. */
+const crouch = (tail: readonly [string, string]) => [
+  "................",
+  "................",
+  tail[0],
+  tail[1] + "k....k",
+  ".kkkk.....kk..kk",
+  "..kkkkkkkkkkkkkk",
+  "..kkkkkkkkkekkkp",
+  "..kkkkkkkkkkkkk.",
+  "..k.k......kk.kk",
+];
+const CROUCH_LEFT = crouch([".k..............", ".k........"]);
+const CROUCH_RIGHT = crouch(["...k............", "..k......."]);
+
 /** Front paws down, back end up. */
 const STRETCH = [
   ".k..............",
@@ -68,14 +133,42 @@ const SLEEP = [
   ".kkkkkkkkkkkkkp.",
   "..kkkkkkkkkkkkk.",
 ] as const;
-const SNORE = [
-  "kk.",
-  ".k.",
-  ".kk",
-] as const;
-export const POSE_ROWS = { sitTailDown: SIT_TAIL_DOWN, sitTailUp: SIT_TAIL_UP, stretch: STRETCH, sleep: SLEEP } as const;
-/** Where the open eye is, walking and sitting alike: a blink covers it with fur. */
-export const BLINK_PIXEL = { x: 11, y: 3 } as const;
+
+export type CatPose =
+  | "walk" | "run" | "sit" | "alert" | "groom" | "yawn" | "bat" | "happy"
+  | "loaf" | "crouch" | "leap" | "stretch" | "sleep";
+
+export type PoseArt = {
+  frames: readonly (readonly string[])[];
+  /** How long one swap of the two frames takes, both together. */
+  frameMs?: number;
+  /** Where the open eye is, if the pose blinks: a blink covers it with fur. */
+  blink?: { x: number; y: number };
+};
+
+const EYE = { x: 11, y: 3 } as const;
+
+export const POSES: Record<CatPose, PoseArt> = {
+  walk: { frames: [WALK_STRIDE, WALK_TOGETHER], frameMs: 480, blink: EYE },
+  run: { frames: [LEAP, WALK_TOGETHER], frameMs: 240 },
+  sit: { frames: [sit(OPEN_EYE, SIT_TAIL_DOWN), sit(OPEN_EYE, SIT_TAIL_UP)], frameMs: 900, blink: EYE },
+  /** Watching the cursor: sitting up with a quick tail. */
+  alert: { frames: [sit(OPEN_EYE, SIT_TAIL_UP), sit(OPEN_EYE, SIT_TAIL_DOWN)], frameMs: 420, blink: EYE },
+  groom: { frames: [GROOM_LICK, GROOM_LIFT], frameMs: 560 },
+  yawn: { frames: [YAWN_WIDE, YAWN_SMALL], frameMs: 1600 },
+  bat: { frames: [BAT_LOW, BAT_HIGH], frameMs: 360, blink: EYE },
+  happy: { frames: [sit(SHUT_EYE, SIT_TAIL_DOWN), sit(SHUT_EYE, SIT_TAIL_UP)], frameMs: 640 },
+  loaf: { frames: [LOAF], blink: { x: 11, y: 5 } },
+  crouch: { frames: [CROUCH_LEFT, CROUCH_RIGHT], frameMs: 260 },
+  leap: { frames: [LEAP], blink: EYE },
+  stretch: { frames: [STRETCH] },
+  sleep: { frames: [SLEEP] },
+};
+
+const SNORE = ["kk.", ".k.", ".kk"] as const;
+const HEART = [".p.p.", "ppppp", ".ppp.", "..p.."] as const;
+const NOTICE = ["k", "k", "k", ".", "k"] as const;
+const YARN = [".pp.", "pkpp", "ppkp", ".pp."] as const;
 
 export type PixelKind = "fur" | "eye" | "nose";
 /** `width` pixels of one kind in a row, starting at column `x`. */
@@ -83,7 +176,7 @@ export type PixelRun = { x: number; y: number; width: number; kind: PixelKind };
 
 const KINDS: Record<string, PixelKind | undefined> = { k: "fur", e: "eye", p: "nose" };
 
-/** The rows as horizontal runs of one kind, from row `firstRow` down: the fewest rects to draw. */
+/** The rows as horizontal runs of one kind: the fewest rects to draw. */
 export function spriteRuns(rows: readonly string[], firstRow = 0): PixelRun[] {
   const runs: PixelRun[] = [];
   rows.forEach((row, index) => {
@@ -101,12 +194,5 @@ export function spriteRuns(rows: readonly string[], firstRow = 0): PixelRun[] {
   return runs;
 }
 
-export const BODY_RUNS = spriteRuns(BODY);
-export const STRIDE_RUNS = spriteRuns(LEGS_STRIDE, BODY.length);
-export const TOGETHER_RUNS = spriteRuns(LEGS_TOGETHER, BODY.length);
-export const SPRITE_ROWS = [...BODY, ...LEGS_STRIDE, ...LEGS_TOGETHER] as const;
-export const SIT_TAIL_DOWN_RUNS = spriteRuns(SIT_TAIL_DOWN);
-export const SIT_TAIL_UP_RUNS = spriteRuns(SIT_TAIL_UP);
-export const STRETCH_RUNS = spriteRuns(STRETCH);
-export const SLEEP_RUNS = spriteRuns(SLEEP);
-export const SNORE_RUNS = spriteRuns(SNORE);
+/** The small pictures beside the cat. */
+export const PROPS = { snore: SNORE, heart: HEART, notice: NOTICE, yarn: YARN } as const;
