@@ -4,11 +4,14 @@ import { ShortcutResetButton } from "../../components/controls/ShortcutResetButt
 import { SettingsToggleRow } from "../../components/settings/SettingsToggleRow";
 import { useTranslation } from "../../i18n";
 import { buildShortcutFromEvent } from "../clipboard/shortcut";
-import { getIslandHideShortcutError, listenIslandHideShortcutStatus } from "./api";
+import { getIslandHideShortcutError, listenIslandHideShortcutStatus, setIslandHideShortcut } from "./api";
 import { DEFAULT_HIDE_SHORTCUT, type HideShortcutSettings } from "./model";
 import "../clipboard/ClipboardSettingsSection.css";
 
-/** The switch for the hide shortcut and its keys, recorded in place like the other shortcuts. */
+/**
+ * The switch for the hide shortcut and its keys, recorded in place like the other shortcuts.
+ * New keys are saved only once Windows accepts them; refused ones leave the old keys in place.
+ */
 export function HideShortcutRows({ settings, onChange, takenBy }: {
   settings: HideShortcutSettings;
   onChange: (settings: HideShortcutSettings) => void;
@@ -17,7 +20,8 @@ export function HideShortcutRows({ settings, onChange, takenBy }: {
   const t = useTranslation();
   const text = t.settings.shortcuts.hide;
   const [registerError, setRegisterError] = useState<string | null>(null);
-  const [conflict, setConflict] = useState("");
+  /** Why the latest recording was not taken. */
+  const [rejected, setRejected] = useState("");
   const { enabled, shortcut } = settings;
 
   useEffect(() => {
@@ -37,13 +41,22 @@ export function HideShortcutRows({ settings, onChange, takenBy }: {
 
   const apply = (next: string) => {
     const owner = takenBy(next);
-    setConflict(owner ? t.settings.shortcuts.taken(next, owner) : "");
+    setRejected(owner ? t.settings.shortcuts.taken(next, owner) : "");
     if (owner) return;
-    setRegisterError(null);
-    onChange({ ...settings, shortcut: next });
+    // The old keys are still in use unless they had already failed to register.
+    const kept = registerError ? undefined : shortcut;
+    void setIslandHideShortcut(true, next)
+      .then(() => {
+        setRegisterError(null);
+        onChange({ enabled: true, shortcut: next });
+      })
+      .catch((failure) => {
+        console.warn("Hide shortcut not registered:", failure);
+        setRejected(t.settings.shortcuts.registerFailed(next, kept));
+      });
   };
   const error = enabled
-    ? conflict || (registerError ? `${t.settings.shortcuts.registerFailed(shortcut)} ${registerError}` : "")
+    ? rejected || (registerError ? `${t.settings.shortcuts.registerFailed(shortcut)} ${registerError}` : "")
     : "";
 
   return (
@@ -52,7 +65,7 @@ export function HideShortcutRows({ settings, onChange, takenBy }: {
         title={text.enable}
         description={text.enableHint(shortcut)}
         checked={enabled}
-        onChange={(next) => { setConflict(""); onChange({ ...settings, enabled: next }); }}
+        onChange={(next) => { setRejected(""); onChange({ ...settings, enabled: next }); }}
       />
       <div className="shortcut-row">
         <div className={`shortcut-control${enabled ? "" : " shortcut-control--disabled"}`}>
@@ -66,7 +79,7 @@ export function HideShortcutRows({ settings, onChange, takenBy }: {
               disabled={!enabled}
               toShortcut={buildShortcutFromEvent}
               onRecord={apply}
-              onInterrupted={() => setConflict(t.settings.shortcuts.takenElsewhere)}
+              onInterrupted={() => setRejected(t.settings.shortcuts.takenElsewhere)}
             />
           </div>
         </div>
